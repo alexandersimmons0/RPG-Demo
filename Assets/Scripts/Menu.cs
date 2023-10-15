@@ -91,10 +91,12 @@ public class Menu : MonoBehaviourPunCallbacks, ILobbyCallbacks{
     }
 
     void UpdateLobbyBrowserUI(){
+        Debug.Log("In lobby browser");
         foreach(GameObject button in roomButtons){
             button.SetActive(false);
         }
         for(int x = 0; x < roomList.Count; x++){
+            Debug.Log("Begin Button " + x);
             GameObject button = x >= roomList.Count ? CreateRoomButton() : roomButtons[x];
             button.SetActive(true);
             button.transform.Find("RoomNameText").GetComponent<TextMeshProUGUI>().text = roomList[x].Name;
@@ -103,6 +105,7 @@ public class Menu : MonoBehaviourPunCallbacks, ILobbyCallbacks{
             string roomName = roomList[x].Name;
             buttonComp.onClick.RemoveAllListeners();
             buttonComp.onClick.AddListener(() => {OnJoinRoomButton(roomName); });
+            Debug.Log("Button End");
         }
     }
 
