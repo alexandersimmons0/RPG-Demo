@@ -74,7 +74,8 @@ public class PlayerController : MonoBehaviourPun{
         Vector3 dir = (Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position)).normalized;
         RaycastHit2D hit = Physics2D.Raycast(transform.position + dir, dir, attackRange);
         if(hit.collider != null && hit.collider.gameObject.CompareTag("Enemy")){
-
+            Enemy enemy = hit.collider.GetComponent<Enemy>();
+            enemy.photonView.RPC("TakeDamage", RpcTarget.MasterClient, damage);
         }
         weaponAnim.SetTrigger("Attack");
     }
@@ -104,6 +105,7 @@ public class PlayerController : MonoBehaviourPun{
     [PunRPC]
     void GiveGold(int goldToGive){
         goldCount += goldToGive;
+        GameUI.instance.UpdateGoldText(goldCount);
     }
 
     void Die(){
@@ -116,6 +118,7 @@ public class PlayerController : MonoBehaviourPun{
 
     IEnumerator Spawn(Vector3 spawnPos, float timeToSpawn){
         yield return new WaitForSeconds(timeToSpawn);
+        headerInfo.photonView.RPC("UpdateHealthBar", RpcTarget.All, curHp);
         dead = false;
         transform.position = spawnPos;
         curHp = maxHp;
